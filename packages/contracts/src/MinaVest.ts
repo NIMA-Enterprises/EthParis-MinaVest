@@ -67,6 +67,8 @@ export class MinaVest extends SmartContract {
     });
 
     // Set initial action state
+    const withdrawActionState: Field = this.withdrawActionState.get();
+    this.withdrawActionState.assertEquals(withdrawActionState);
     this.withdrawActionState.set(Reducer.initialActionState);
 
     // Set owner
@@ -207,6 +209,19 @@ export class MinaVest extends SmartContract {
         amount,
       })
     );
+  }
+
+  @method distributeFunds() {
+    const withdrawActionState: Field = this.withdrawActionState.get();
+    this.withdrawActionState.assertEquals(withdrawActionState);
+
+    const newWithdrawActionState = this.reducer.forEach(
+        this.reducer.getActions({ fromActionState: withdrawActionState }),
+        ({ user, amount }) => this.send( {to: user, amount} ),
+        withdrawActionState
+    );
+
+    this.withdrawActionState.set(newWithdrawActionState);
   }
 
   /**
