@@ -23,8 +23,7 @@ const Button: React.FC<IButtonProps> & {
 		"cursor-pointer group w-fit rounded flex flex-row justify-center items-center outline-transparent ring-inset gap-2",
 		// types
 
-		type === "primary" &&
-			"bg-gradient-to-b from-[rgba(231,242,246,0.16)] to-[rgba(231,242,246,0.01)] text-white bg-[#2D2D2D]",
+		type === "primary" && "bg-dark-gradient",
 		type === "ghost" && " bg-transparent",
 		type === "outline" && " bg-transparent border-slate-700 border ",
 		size === "md" && "h-14 px-5 py-4",

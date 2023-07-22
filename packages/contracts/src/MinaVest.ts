@@ -51,7 +51,10 @@ export class MinaVest extends SmartContract {
    * @param usersMerkleMapRoot is root of a merkle tree of users
    * @param verifiedKeysMerkleMapRoot is root of a merkle tree of verified keys
    */
-  @method initialize(usersMerkleMapRoot: Field, verifiedKeysMerkleMapRoot: Field) {
+  @method initialize(
+    usersMerkleMapRoot: Field,
+    verifiedKeysMerkleMapRoot: Field
+  ) {
     // Disable private key owner from manipulating contract after initialization
     this.account.permissions.set({
       ...Permissions.default(),
@@ -74,15 +77,24 @@ export class MinaVest extends SmartContract {
     // Set root of users merkle map
     const _usersMerkleMapRoot: Field = this.usersMerkleMapRoot.get();
     this.usersMerkleMapRoot.assertEquals(_usersMerkleMapRoot);
-    _usersMerkleMapRoot.equals(0).assertTrue('Users merkle map root already initialized.');
-    usersMerkleMapRoot.equals(0).assertFalse('Invalid users merkle map root invalid value.');
+    _usersMerkleMapRoot
+      .equals(0)
+      .assertTrue('Users merkle map root already initialized.');
+    usersMerkleMapRoot
+      .equals(0)
+      .assertFalse('Invalid users merkle map root invalid value.');
     this.usersMerkleMapRoot.set(usersMerkleMapRoot);
 
     // Set root of verified keys merkle map
-    const _verifiedKeysMerkleMapRoot: Field = this.verifiedKeysMerkleMapRoot.get();
+    const _verifiedKeysMerkleMapRoot: Field =
+      this.verifiedKeysMerkleMapRoot.get();
     this.verifiedKeysMerkleMapRoot.assertEquals(_verifiedKeysMerkleMapRoot);
-    _verifiedKeysMerkleMapRoot.equals(0).assertTrue('Verified keys merkle map root already initialized.');
-    verifiedKeysMerkleMapRoot.equals(0).assertFalse('Invalid verified keys merkle map root.');
+    _verifiedKeysMerkleMapRoot
+      .equals(0)
+      .assertTrue('Verified keys merkle map root already initialized.');
+    verifiedKeysMerkleMapRoot
+      .equals(0)
+      .assertFalse('Invalid verified keys merkle map root.');
     this.verifiedKeysMerkleMapRoot.set(verifiedKeysMerkleMapRoot);
 
     // Require zkApp signature
@@ -99,8 +111,13 @@ export class MinaVest extends SmartContract {
     const usersMerkleMapRoot: Field = this.usersMerkleMapRoot.get();
     this.usersMerkleMapRoot.assertEquals(usersMerkleMapRoot);
 
-    const [userWitnessRoot, userWitnessKey] = userWitness.computeRootAndKey(Field(0));
-    usersMerkleMapRoot.assertEquals(userWitnessRoot, 'Invalid users merkle map root.');
+    const [userWitnessRoot, userWitnessKey] = userWitness.computeRootAndKey(
+      Field(0)
+    );
+    usersMerkleMapRoot.assertEquals(
+      userWitnessRoot,
+      'Invalid users merkle map root.'
+    );
     userWitnessKey.assertEquals(userWitnessKey, 'Invalid user witness key.');
 
     // Compute new users merkle map root
@@ -122,19 +139,32 @@ export class MinaVest extends SmartContract {
     amount: UInt64
   ) {
     // Verify signer's presence in verifiedKeysMerkleMapRoot
-    const verifiedKeysMerkleMapRoot: Field = this.verifiedKeysMerkleMapRoot.get();
+    const verifiedKeysMerkleMapRoot: Field =
+      this.verifiedKeysMerkleMapRoot.get();
     this.verifiedKeysMerkleMapRoot.assertEquals(verifiedKeysMerkleMapRoot);
 
-    const [signerWitnessRoot, signerWitnessKey] = signerWitness.computeRootAndKey(Field(1));
-    verifiedKeysMerkleMapRoot.assertEquals(signerWitnessRoot, 'Invalid verified keys merkle map root.');
-    signerWitnessKey.assertEquals(signerWitnessKey, 'Invalid signer witness key.');
+    const [signerWitnessRoot, signerWitnessKey] =
+      signerWitness.computeRootAndKey(Field(1));
+    verifiedKeysMerkleMapRoot.assertEquals(
+      signerWitnessRoot,
+      'Invalid verified keys merkle map root.'
+    );
+    signerWitnessKey.assertEquals(
+      signerWitnessKey,
+      'Invalid signer witness key.'
+    );
 
     // Verify user's presence in verifiedKeysMerkleMapRoot
     const usersMerkleMapRoot: Field = this.usersMerkleMapRoot.get();
     this.usersMerkleMapRoot.assertEquals(usersMerkleMapRoot);
 
-    const [userWitnessRoot, userWitnessKey] = userWitness.computeRootAndKey(Field(1));
-    usersMerkleMapRoot.assertEquals(userWitnessRoot, 'Invalid users merkle map root.');
+    const [userWitnessRoot, userWitnessKey] = userWitness.computeRootAndKey(
+      Field(1)
+    );
+    usersMerkleMapRoot.assertEquals(
+      userWitnessRoot,
+      'Invalid users merkle map root.'
+    );
     userWitnessKey.assertEquals(userWitnessKey, 'Invalid user witness key.');
 
     // Check that network timestamp is not crossing the deadline
@@ -144,12 +174,12 @@ export class MinaVest extends SmartContract {
 
     // Compute message hash
     const msgHash = Poseidon.hash([
-        ...CircuitString.fromString('withdraw').toFields(),
-        ...this.address.toFields(),
-        ...this.sender.toFields(),
-        ...deadline.toFields(),
-        ...amount.toFields(),
-        portion
+      ...CircuitString.fromString('withdraw').toFields(),
+      ...this.address.toFields(),
+      ...this.sender.toFields(),
+      ...deadline.toFields(),
+      ...amount.toFields(),
+      portion,
     ]);
 
     // Verify signature
@@ -163,15 +193,11 @@ export class MinaVest extends SmartContract {
       this.reducer.getActions({ fromActionState: withdrawActionState }),
       Field,
       (state: Field, action: WithdrawAction) => {
-        return Provable.if(
-          action.user.equals(this.sender),
-          Field(1),
-          Field(0)
-        );
+        return Provable.if(action.user.equals(this.sender), Field(1), Field(0));
       },
       { state: Field(0), actionState: withdrawActionState }
     );
-    isSignatureUsed.assertEquals(Field(0), "Signature already used.");
+    isSignatureUsed.assertEquals(Field(0), 'Signature already used.');
 
     // Dispatch new withdraw action
     this.reducer.dispatch(
