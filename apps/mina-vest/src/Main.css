@@ -7,6 +7,7 @@
 	html {
 		@apply font-main !important;
 		font-size: 14px;
+		@apply bg-mina-light-grey;
 	}
 
 	@media (min-width: 640px) {
@@ -32,8 +33,16 @@
 }
 
 @layer utilities {
-	.bg-orange-gradient {
-		@apply bg-gradient-to-r from-orange-600 to-orange-400;
+	.bg-card-gradient {
+		background: linear-gradient(
+			180deg,
+			#e7f2f6 0%,
+			rgba(183, 205, 216, 0.4) 100%
+		);
+	}
+
+	.bg-dark-gradient {
+		@apply bg-mina-black text-mina-white bg-gradient-to-b from-[rgba(231,242,246,0.16)] to-[rgba(231,242,246,0.01)];
 	}
 
 	.stroke-orange-gradient {
