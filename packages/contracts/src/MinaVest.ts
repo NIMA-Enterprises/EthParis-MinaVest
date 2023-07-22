@@ -138,7 +138,9 @@ export class MinaVest extends SmartContract {
     userWitnessKey.assertEquals(userWitnessKey, 'Invalid user witness key.');
 
     // Check that network timestamp is not crossing the deadline
-    this.network.timestamp.get().assertLessThan(deadline);
+    const timestamp = this.network.timestamp.get();
+    this.network.timestamp.assertEquals(timestamp);
+    timestamp.assertLessThan(deadline);
 
     // Compute message hash
     const msgHash = Poseidon.hash([
