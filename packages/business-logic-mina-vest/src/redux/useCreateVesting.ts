@@ -17,10 +17,18 @@ const useCreateVesting = () => {
 			fixedCacheKey: "useCreateVestingStep2Mutation",
 		});
 
+	const [
+		waitForTxToLeavePendingPool,
+		waitForTxToLeavePendingPoolMutationObj,
+	] = minaVestBusinessLogicApi.useCreateVestingStep3Mutation({
+		fixedCacheKey: "useCreateVestingStep3Mutation",
+	});
+
 	React.useEffect(() => {
 		return () => {
 			generateTxProofForOrganisationDeployMutationObj.reset();
 			sendTxMutationObj.reset();
+			waitForTxToLeavePendingPoolMutationObj.reset();
 		};
 	}, []);
 
@@ -42,13 +50,22 @@ const useCreateVesting = () => {
 			isSuccess: sendTxMutationObj.isSuccess,
 			isError: sendTxMutationObj.isError,
 		},
+		{
+			name: "Wait for tx to leave pending pool" as const,
+			isLoading: waitForTxToLeavePendingPoolMutationObj.isLoading,
+			isUninitialized:
+				waitForTxToLeavePendingPoolMutationObj.isUninitialized,
+			isSuccess: waitForTxToLeavePendingPoolMutationObj.isSuccess,
+			isError: waitForTxToLeavePendingPoolMutationObj.isError,
+		},
 	];
 
 	const isSuccess = steps.every(({ isSuccess }) => isSuccess);
 	const isError = steps.some(({ isError }) => isError);
 	const error =
 		generateTxProofForOrganisationDeployMutationObj.error ||
-		sendTxMutationObj.error;
+		sendTxMutationObj.error ||
+		waitForTxToLeavePendingPoolMutationObj.error;
 	const isLoading = steps.some(({ isLoading }) => isLoading);
 	const isUninitialized = steps.every(
 		({ isUninitialized }) => isUninitialized,
@@ -81,6 +98,10 @@ const useCreateVesting = () => {
 
 		const { hash } = await sendTx({
 			proof,
+		}).unwrap();
+
+		await waitForTxToLeavePendingPool({
+			txHash: hash,
 		}).unwrap();
 
 		return {
