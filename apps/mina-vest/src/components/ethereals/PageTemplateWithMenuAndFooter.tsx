@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 
+import { Menu } from "@components/organisms/Menu";
 import { cx } from "src/utils";
 
 const PageTemplateWithMenuAndFooter = () => {
@@ -10,7 +11,7 @@ const PageTemplateWithMenuAndFooter = () => {
 
 	return (
 		<div className={pageClassName}>
-			{/* <Menu /> */}
+			<Menu />
 			<div className="flex-grow">
 				<Outlet />
 			</div>

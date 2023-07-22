@@ -54,9 +54,7 @@ export default defineConfig({
 		},
 	},
 
-	envPrefix: [
-		"MINAVEST_IS_PROD",
-	],
+	envPrefix: ["MINAVEST_IS_PROD", "WALLET_CONNECTION_IS_PROD"],
 
 	build: {
 		target: "es2022",
