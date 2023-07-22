@@ -28,11 +28,13 @@ export class MinaVest extends SmartContract {
   // @notice merkle map where userPublicKey:isMember is key:value scheme
   // scalable solution for storing users
   @state(Field) usersMerkleMapRoot = State<Field>();
-  // @notice Updated every 5 blocks by the backend if there were actions detected in between
+  // @notice updated every 5 blocks by the backend if there were actions detected in between
   @state(Field) withdrawActionState = State<Field>();
   // @notice merkle map where publicKey:isVerified is key:value scheme
   // verified public keys are accepted multi-signature verification keys
-  @state(Field) verifiedKeysMerkleMapRoot = State<Field>(); 
+  @state(Field) verifiedKeysMerkleMapRoot = State<Field>();
+  // @notice contract owner / manager / creator
+  @state(PublicKey) owner = State<PublicKey>();
 
   reducer = Reducer({ actionType: WithdrawAction });
 
@@ -64,6 +66,11 @@ export class MinaVest extends SmartContract {
     // Set initial action state
     this.withdrawActionState.set(Reducer.initialActionState);
 
+    // Set owner
+    const owner = this.owner.get();
+    this.owner.assertEquals(owner);
+    this.owner.set(this.sender);
+
     // Set root of users merkle map
     const _usersMerkleMapRoot: Field = this.usersMerkleMapRoot.get();
     this.usersMerkleMapRoot.assertEquals(_usersMerkleMapRoot);
@@ -83,9 +90,29 @@ export class MinaVest extends SmartContract {
   }
 
   /**
+   * @notice Function to add new user
+   */
+  @method addUser(userWitness: MerkleMapWitness) {
+    // Make sure owner is caller
+    this.onlyOwner();
+    // Verify user's presence in a merkle map
+    const usersMerkleMapRoot: Field = this.usersMerkleMapRoot.get();
+    this.usersMerkleMapRoot.assertEquals(usersMerkleMapRoot);
+
+    const [userWitnessRoot, userWitnessKey] = userWitness.computeRootAndKey(Field(0));
+    usersMerkleMapRoot.assertEquals(userWitnessRoot, 'Invalid users merkle map root.');
+    userWitnessKey.assertEquals(userWitnessKey, 'Invalid user witness key.');
+
+    // Compute new users merkle map root
+    const [newUsersMerkleMapRoot] = userWitness.computeRootAndKey(Field(1));
+    // Set new users merkle map root
+    this.usersMerkleMapRoot.set(newUsersMerkleMapRoot);
+  }
+
+  /**
    * @notice Function to withdraw tokens of a single portion
    */
-  @method withdraw(
+  @method withdrawRequest(
     userWitness: MerkleMapWitness,
     signature: Signature,
     signer: PublicKey,
@@ -94,7 +121,7 @@ export class MinaVest extends SmartContract {
     portion: Field,
     amount: UInt64
   ) {
-    // Verify signer presence in verifiedKeysMerkleMapRoot
+    // Verify signer's presence in verifiedKeysMerkleMapRoot
     const verifiedKeysMerkleMapRoot: Field = this.verifiedKeysMerkleMapRoot.get();
     this.verifiedKeysMerkleMapRoot.assertEquals(verifiedKeysMerkleMapRoot);
 
@@ -102,7 +129,7 @@ export class MinaVest extends SmartContract {
     verifiedKeysMerkleMapRoot.assertEquals(signerWitnessRoot, 'Invalid verified keys merkle map root.');
     signerWitnessKey.assertEquals(signerWitnessKey, 'Invalid signer witness key.');
 
-    // Verify signer presence in verifiedKeysMerkleMapRoot
+    // Verify user's presence in verifiedKeysMerkleMapRoot
     const usersMerkleMapRoot: Field = this.usersMerkleMapRoot.get();
     this.usersMerkleMapRoot.assertEquals(usersMerkleMapRoot);
 
@@ -127,7 +154,7 @@ export class MinaVest extends SmartContract {
     signature.verify(signer, [msgHash]).assertTrue('Invalid signature.');
 
     // Reduce to check that signature was not used already
-    let withdrawActionState = this.withdrawActionState.get();
+    const withdrawActionState = this.withdrawActionState.get();
     this.withdrawActionState.assertEquals(withdrawActionState);
     // Reduce actions to check if signature is used
     const { state: isSignatureUsed } = this.reducer.reduce(
@@ -152,5 +179,14 @@ export class MinaVest extends SmartContract {
         amount,
       })
     );
+  }
+
+  /**
+   * @notice function to checksum that caller is contract owner
+   */
+  onlyOwner() {
+    const owner = this.owner.get();
+    this.owner.assertEquals(owner);
+    owner.equals(this.sender).assertTrue('Caller is not the owner.');
   }
 }
