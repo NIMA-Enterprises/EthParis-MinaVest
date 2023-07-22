@@ -209,6 +209,29 @@ export class MinaVest extends SmartContract {
     );
   }
 
+  @method distributeFunds() {
+    const withdrawActionState: Field = this.withdrawActionState.get();
+    this.withdrawActionState.assertEquals(withdrawActionState);
+
+    //const newWithdrawActionState = this.reducer.forEach(
+    //    this.reducer.getActions({ fromActionState: withdrawActionState }),
+    //    ({ user, amount }) => { this.send({ to: user, amount }) },
+    //    withdrawActionState
+    //);
+
+    const { actionState: newWithdrawActionState } = this.reducer.reduce(
+      this.reducer.getActions({ fromActionState: withdrawActionState }),
+      Field,
+      (state: Field, action: WithdrawAction) => {
+        this.send({ to: action.user, amount: action.amount })
+        return Field(0);
+      },
+      { state: Field(0), actionState: withdrawActionState }
+    );
+
+    this.withdrawActionState.set(newWithdrawActionState);
+  }
+
   /**
    * @notice function to checksum that caller is contract owner
    */
