@@ -1,0 +1,20 @@
+{
+	"name": "business-logic-mina-vest",
+	"version": "1.0.0",
+	"main": "src",
+	"sideEffects": false,
+	"private": true,
+	"scripts": {
+		"lint": "TIMING=1 eslint src/**/*.ts* --fix",
+		"clean": "rm -rf .turbo && rm -rf node_modules"
+	},
+	"dependencies": {
+		"@reduxjs/toolkit": "^1.9.1",
+		"get-endpoint-creators": "*",
+		"snarkyjs": "^0.11.4",
+		"react": "^18.2.0"
+	},
+	"devDependencies": {
+		"@types/react": "^18.0.33"
+	}
+}

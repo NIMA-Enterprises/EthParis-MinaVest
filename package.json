@@ -1,0 +1,64 @@
+{
+	"private": true,
+	"workspaces": {
+		"packages": [
+			"packages/*",
+			"apps/*",
+			"scripts/ngrokqr"
+		],
+		"nohoist": [
+			"**/flowbite",
+			"**/snarkyjs",
+			"**/tslib"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.5%",
+			"last 10 versions",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"engines": {
+		"npm": "please-use-yarn",
+		"yarn": ">= 1.22.17",
+		"node": ">= 16.15.1"
+	},
+	"engineStrict": true,
+	"scripts": {
+		"build": "turbo run build",
+		"lint": "turbo run lint",
+		"clean": "turbo run clean && rm -rf node_modules",
+		"format": "prettier --write \"**/*.{ts,tsx,md}\"",
+		"start:mina-vest": "yarn workspace mina-vest start:host",
+		"postinstall": "yarn husky install && cp ./gitmojis.json ./node_modules/commitlint-plugin-gitmoji/lib/gitmojis.json",
+		"hook:prepare-commit-msg": "node scripts/prepare-commit-msg.js"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "^17.0.3",
+		"@commitlint/config-conventional": "^17.0.3",
+		"@gitmoji/commit-types": "^1.1.5",
+		"@types/babel__core": "^7.1.19",
+		"commitlint-config-gitmoji": "^2.2.5",
+		"commitlint-plugin-gitmoji": "^2.2.0",
+		"configs": "*",
+		"conventional-changelog-gitmoji-config": "^1.4.3",
+		"eslint": "^8.19.0",
+		"husky": "^8.0.1",
+		"pre-commit": "^1.2.2",
+		"prettier": "^2.7.1",
+		"prettier-plugin-tailwindcss": "^0.2.1",
+		"stylelint": "^14.9.1",
+		"turbo": "latest",
+		"typescript": "^4.7.4"
+	},
+	"dependencies": {
+		"snarkyjs": "^0.11.4"
+	}
+}
