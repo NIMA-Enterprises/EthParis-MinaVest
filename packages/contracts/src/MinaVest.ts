@@ -1,9 +1,4 @@
-import {
-  Field,
-  SmartContract,
-  state,
-  State,
-} from 'snarkyjs';
+import { Field, SmartContract, state, State } from 'snarkyjs';
 
 export class MinaVest extends SmartContract {
   @state(Field) num = State<Field>();
