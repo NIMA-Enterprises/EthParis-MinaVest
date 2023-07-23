@@ -34,7 +34,7 @@ const TestInput1: React.FC<{
 					className="h-5 w-5 stroke-white"
 				/>
 			</Input.Button>
-			{/* <Input.Currency>AVAX</Input.Currency> */}
+			{/* <Input.Currency>MINA</Input.Currency> */}
 			{/* <Input.Status
 				name=""
 				// size={Input.Status.Size.MEDIUM}
