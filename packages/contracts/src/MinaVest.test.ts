@@ -13,7 +13,6 @@ import {
   Poseidon,
 } from 'snarkyjs';
 
-
 let proofsEnabled: boolean = false;
 
 function createLocalBlockchain(): PrivateKey {
@@ -59,10 +58,8 @@ describe('MinaVest Contract Tests', () => {
     zkAppInstance = new MinaVest(zkAppAddress);
   });
 
-  describe('', () => {
-    it('generates and deploys the `MinaVest` smart contract', async () => {
-      // Deploy zkApp
-      await localDeploy(zkAppInstance, zkAppPrivateKey, deployerAccount);
-    });
+  it('generates and deploys the `MinaVest` smart contract', async () => {
+    // Deploy zkApp
+    await localDeploy(zkAppInstance, zkAppPrivateKey, deployerAccount);
   });
 });

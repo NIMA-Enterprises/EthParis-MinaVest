@@ -1,7 +1,13 @@
-import { loadImage, loadMultipleImages } from "../service";
+import {
+	loadImage,
+	loadMultipleImages,
+	waitForTxToLeavePendingPool,
+} from "../service";
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { createVesting } from "contract-service-mina-vest/src/workerized";
 import { getEndpointCreators } from "get-endpoint-creators";
+
+window.waitForTxToLeavePendingPool = waitForTxToLeavePendingPool;
 
 const minaVestBusinessLogicApi = createApi({
 	reducerPath: "minaVestBusinessLogicApi",
@@ -14,10 +20,11 @@ const minaVestBusinessLogicApi = createApi({
 				createVesting.step1.generateTxProofForOrganisationDeploy,
 			),
 			createVestingStep2: createMutation(createVesting.step2.sendTx),
-			createVestingStep3: createMutation(
-				createVesting.step3.generateTxProof,
+			createVestingStep3: createMutation(waitForTxToLeavePendingPool),
+			createVestingStep4: createMutation(
+				createVesting.step4.generateTxProof,
 			),
-			createVestingStep4: createMutation(createVesting.step4.sendTx),
+			createVestingStep5: createMutation(createVesting.step5.sendTx),
 
 			// soft image loading
 			loadImage: createQuery(loadImage),

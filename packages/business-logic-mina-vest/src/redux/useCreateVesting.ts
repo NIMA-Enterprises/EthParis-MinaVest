@@ -17,41 +17,59 @@ const useCreateVesting = () => {
 			fixedCacheKey: "useCreateVestingStep2Mutation",
 		});
 
+	const [
+		waitForTxToLeavePendingPool,
+		waitForTxToLeavePendingPoolMutationObj,
+	] = minaVestBusinessLogicApi.useCreateVestingStep3Mutation({
+		fixedCacheKey: "useCreateVestingStep3Mutation",
+	});
+
 	const [generateInitializeTxProof, generateInitializeTxProofMutationObj] =
-		minaVestBusinessLogicApi.useCreateVestingStep3Mutation({
-			fixedCacheKey: "useCreateVestingStep3Mutation",
+		minaVestBusinessLogicApi.useCreateVestingStep4Mutation({
+			fixedCacheKey: "useCreateVestingStep4Mutation",
 		});
 
 	const [sendTx2, sendTx2MutationObj] =
-		minaVestBusinessLogicApi.useCreateVestingStep4Mutation({
-			fixedCacheKey: "useCreateVestingStep4Mutation",
+		minaVestBusinessLogicApi.useCreateVestingStep5Mutation({
+			fixedCacheKey: "useCreateVestingStep5Mutation",
 		});
 
 	React.useEffect(() => {
 		return () => {
 			generateTxProofForOrganisationDeployMutationObj.reset();
 			sendTxMutationObj.reset();
+			waitForTxToLeavePendingPoolMutationObj.reset();
+			generateInitializeTxProofMutationObj.reset();
+			sendTx2MutationObj.reset();
 		};
 	}, []);
 
 	const steps = [
-		{
-			name: "Generate proof for organisation deploy" as const,
-			isLoading:
-				generateTxProofForOrganisationDeployMutationObj.isLoading,
-			isUninitialized:
-				generateTxProofForOrganisationDeployMutationObj.isUninitialized,
-			isSuccess:
-				generateTxProofForOrganisationDeployMutationObj.isSuccess,
-			isError: generateTxProofForOrganisationDeployMutationObj.isError,
-		},
-		{
-			name: "Send organisation tx" as const,
-			isLoading: sendTxMutationObj.isLoading,
-			isUninitialized: sendTxMutationObj.isUninitialized,
-			isSuccess: sendTxMutationObj.isSuccess,
-			isError: sendTxMutationObj.isError,
-		},
+		// {
+		// 	name: "Generate proof for organisation deploy" as const,
+		// 	isLoading:
+		// 		generateTxProofForOrganisationDeployMutationObj.isLoading,
+		// 	isUninitialized:
+		// 		generateTxProofForOrganisationDeployMutationObj.isUninitialized,
+		// 	isSuccess:
+		// 		generateTxProofForOrganisationDeployMutationObj.isSuccess,
+		// 	isError: generateTxProofForOrganisationDeployMutationObj.isError,
+		// },
+		// {
+		// 	name: "Send organisation tx" as const,
+		// 	isLoading: sendTxMutationObj.isLoading,
+		// 	isUninitialized: sendTxMutationObj.isUninitialized,
+		// 	isSuccess: sendTxMutationObj.isSuccess,
+		// 	isError: sendTxMutationObj.isError,
+		// },
+		// {
+		// 	name: "Wait for tx to leave pending pool" as const,
+		// 	isLoading: waitForTxToLeavePendingPoolMutationObj.isLoading,
+		// 	isUninitialized:
+		// 		waitForTxToLeavePendingPoolMutationObj.isUninitialized,
+		// 	isSuccess: waitForTxToLeavePendingPoolMutationObj.isSuccess,
+		// 	isError: waitForTxToLeavePendingPoolMutationObj.isError,
+		// },
 		{
 			name: "Initialize proof generation" as const,
 			isLoading: generateInitializeTxProofMutationObj.isLoading,
@@ -75,7 +93,8 @@ const useCreateVesting = () => {
 		generateTxProofForOrganisationDeployMutationObj.error ||
 		sendTxMutationObj.error ||
 		sendTx2MutationObj.error ||
-		generateInitializeTxProofMutationObj.error;
+		generateInitializeTxProofMutationObj.error ||
+		waitForTxToLeavePendingPoolMutationObj.error;
 	const isLoading = steps.some(({ isLoading }) => isLoading);
 	const isUninitialized = steps.every(
 		({ isUninitialized }) => isUninitialized,
@@ -91,31 +110,42 @@ const useCreateVesting = () => {
 	};
 
 	const f = async () => {
-		const zkAppPrivateKey = PrivateKey.random();
+		const zkAppPrivateKey = PrivateKey.fromBase58(
+			"EKE4vQTy7MG86yTbXcGhp7u8fwy3CvcYCc99Bpj9Gf3uvwRwtpdD",
+		);
+		// const zkAppPrivateKey = PrivateKey.random();
 		const originalAccount =
 			(await wagmiClient.connectors[0].getAccount()) as string;
 
-		console.log({ originalAccount });
+		console.log({
+			originalAccount,
+			zkAppPrivateKey: zkAppPrivateKey.toBase58(),
+		});
 
 		if (!originalAccount) {
 			throw new Error("No wagmi connector found");
 		}
 
-		const { proof } = await generateTxProofForOrganisationDeploy({
-			zkAppPrivateKeyAsBase58: zkAppPrivateKey.toBase58(),
-			feePayerPublicKeyAsBase58: originalAccount,
-		}).unwrap();
+		// const { proof } = await generateTxProofForOrganisationDeploy({
+		// 	zkAppPrivateKeyAsBase58: zkAppPrivateKey.toBase58(),
+		// 	feePayerPublicKeyAsBase58: originalAccount,
+		// }).unwrap();
 
-		const { hash } = await sendTx({
-			proof,
-		}).unwrap();
+		// const { hash } = await sendTx({
+		// 	proof,
+		// }).unwrap();
+
+		// await waitForTxToLeavePendingPool({
+		// 	txHash: hash,
+		// }).unwrap();
 
 		const { proof: proof2 } = await generateInitializeTxProof({
 			contractAddress: zkAppPrivateKey.toPublicKey().toBase58(),
 			feePayerPublicKeyAsBase58: originalAccount,
+			zkAppPrivateKeyAsBase58: zkAppPrivateKey.toBase58(),
 		}).unwrap();
 
-		const { hash: hash2 } = await sendTx({
+		const { hash: hash2 } = await sendTx2({
 			proof: proof2,
 		}).unwrap();
 

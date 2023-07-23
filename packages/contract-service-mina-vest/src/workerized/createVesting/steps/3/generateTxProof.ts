@@ -8,9 +8,11 @@ import { waitForAccountChange } from "wallet-connection";
 const generateTxProof = async ({
 	contractAddress,
 	feePayerPublicKeyAsBase58,
+	zkAppPrivateKeyAsBase58,
 }: {
 	contractAddress: string;
 	feePayerPublicKeyAsBase58: string;
+	zkAppPrivateKeyAsBase58: string;
 }) => {
 	const { worker, terminate } = await spawn<GenerateTransactionProofType>(
 		importedWorker,
@@ -20,6 +22,7 @@ const generateTxProof = async ({
 		const { proof } = await worker.generateTransactionProof({
 			contractAddress,
 			feePayerPublicKeyAsBase58,
+			zkAppPrivateKeyAsBase58,
 		});
 
 		return { proof };

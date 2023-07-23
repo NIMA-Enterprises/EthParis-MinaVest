@@ -12,21 +12,31 @@ const createMinaVestContract = async ({
 	zkAppAddress: ReturnType<typeof PublicKey["fromBase58"]>;
 	zkAppInstance: MinaVest;
 }> => {
+	console.log("1");
+
 	const Berkeley = Mina.Network({
 		mina: "https://proxy.berkeley.minaexplorer.com/graphql",
 		archive: "https://archive.berkeley.minaexplorer.com",
 	});
+
+	console.log("2");
 	Mina.setActiveInstance(Berkeley);
 
 	const zkAppAddress = PublicKey.fromBase58(contractAddress);
+
+	console.log("3");
 	const zkAppInstance = new MinaVest(zkAppAddress);
+
+	console.log("4");
 
 	if (!skipCompile) {
 		await MinaVest.compile();
 	}
 
+	console.log("5");
 	const response = await fetchAccount({ publicKey: zkAppAddress });
 
+	console.log("6");
 	if (response.error) {
 		throw Error(response.error.statusText);
 	}
