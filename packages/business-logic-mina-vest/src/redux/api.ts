@@ -7,8 +7,6 @@ import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { createVesting } from "contract-service-mina-vest/src/workerized";
 import { getEndpointCreators } from "get-endpoint-creators";
 
-window.waitForTxToLeavePendingPool = waitForTxToLeavePendingPool;
-
 const minaVestBusinessLogicApi = createApi({
 	reducerPath: "minaVestBusinessLogicApi",
 	baseQuery: fakeBaseQuery(),
