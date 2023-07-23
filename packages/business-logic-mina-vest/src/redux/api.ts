@@ -14,6 +14,11 @@ const minaVestBusinessLogicApi = createApi({
 				createVesting.step1.generateTxProofForOrganisationDeploy,
 			),
 			createVestingStep2: createMutation(createVesting.step2.sendTx),
+			createVestingStep3: createMutation(
+				createVesting.step3.generateTxProof,
+			),
+			createVestingStep4: createMutation(createVesting.step4.sendTx),
+
 			// soft image loading
 			loadImage: createQuery(loadImage),
 			loadMultipleImages: createQuery(loadMultipleImages),

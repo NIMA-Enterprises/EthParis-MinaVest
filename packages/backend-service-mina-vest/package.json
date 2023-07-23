@@ -1,5 +1,5 @@
 {
-	"name": "contract-service-mina-vest",
+	"name": "backend-service-mina-vest",
 	"version": "1.0.0",
 	"main": "src",
 	"sideEffects": false,
@@ -9,15 +9,10 @@
 		"clean": "rm -rf .turbo && rm -rf node_modules"
 	},
 	"dependencies": {
-		"comlink": "^4.4.0",
-		"contracts": "*",
-		"get-endpoint-creators": "*",
-		"mina-signer": "^2.0.3",
 		"snarkyjs": "^0.11.4",
-		"wallet-connection": "*",
-		"@aurowallet/mina-provider": "^0.1.4",
 		"zod": "^3.19.1",
-		"backend-service-mina-vest": "*"
+		"contract-service-mina-vest": "*",
+		"query-function-creators": "*"
 	},
 	"devDependencies": {}
 }
