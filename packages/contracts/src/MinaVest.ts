@@ -2,7 +2,6 @@ import {
   Field,
   SmartContract,
   UInt64,
-  Bool,
   state,
   State,
   method,
@@ -103,6 +102,7 @@ export class MinaVest extends SmartContract {
 
   /**
    * @notice Function to add new user
+   * @param userWitness is witness for user's presence in the users merkle map
    */
   @method addUser(userWitness: MerkleMapWitness) {
     // Make sure owner is caller
@@ -128,6 +128,13 @@ export class MinaVest extends SmartContract {
 
   /**
    * @notice Function to withdraw tokens of a single portion
+   * @param userWitness is witness for user's presence in the users merkle map
+   * @param signature is signature to be verified
+   * @param signer is a verified key which was used to sign message
+   * @param signerWitness is witness for signer's presence in the verified keys merkle map
+   * @param deadline is signature expiration timestamp
+   * @param portion is a portion user is requesting a withdraw for
+   * @param amount is an amount of mina tokens present in the portion
    */
   @method withdrawRequest(
     userWitness: MerkleMapWitness,
@@ -155,7 +162,7 @@ export class MinaVest extends SmartContract {
     );
 
     // Verify user's presence in verifiedKeysMerkleMapRoot
-    const usersMerkleMapRoot: Field = this.usersMerkleMapRoot.get();
+    const usersMerkleMapRoot = this.usersMerkleMapRoot.get();
     this.usersMerkleMapRoot.assertEquals(usersMerkleMapRoot);
 
     const [userWitnessRoot, userWitnessKey] = userWitness.computeRootAndKey(
@@ -209,6 +216,9 @@ export class MinaVest extends SmartContract {
     );
   }
 
+  /**
+   * @notice Function to deistribute funds to users who requested withdrawals
+   */
   @method distributeFunds() {
     const withdrawActionState: Field = this.withdrawActionState.get();
     this.withdrawActionState.assertEquals(withdrawActionState);
@@ -223,7 +233,7 @@ export class MinaVest extends SmartContract {
       this.reducer.getActions({ fromActionState: withdrawActionState }),
       Field,
       (state: Field, action: WithdrawAction) => {
-        this.send({ to: action.user, amount: action.amount })
+        this.send({ to: action.user, amount: action.amount });
         return Field(0);
       },
       { state: Field(0), actionState: withdrawActionState }
