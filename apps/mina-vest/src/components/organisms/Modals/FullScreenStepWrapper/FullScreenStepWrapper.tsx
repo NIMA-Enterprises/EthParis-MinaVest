@@ -12,14 +12,16 @@ const FullScreenStepWrapper: React.FC<React.PropsWithChildren> = ({
 				backgroundImage: `url(${modalBackground})`,
 			}}
 		>
-			<h1 className="text-center w-full text-[48px] font-bold">test</h1>
+			<h1 className="text-center w-full text-[48px] font-bold">
+				Create Vesting
+			</h1>
 
-			<p className="text-center w-full text-[16px] max-w-[632px] mt-4 mb-20">
+			{/* <p className="text-center w-full text-[16px] max-w-[632px] mt-4 mb-12">
 				Keep this tab open until all steps have been completed. Please
 				note that certain steps might require some time to complete (5-7
 				minutes). You can track the progress of each step on the right.
 				Your patience is greatly appreciated.
-			</p>
+			</p> */}
 
 			{children}
 		</div>
