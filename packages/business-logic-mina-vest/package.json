@@ -10,11 +10,13 @@
 	},
 	"dependencies": {
 		"@reduxjs/toolkit": "^1.9.1",
-		"get-endpoint-creators": "*",
 		"contract-service-mina-vest": "*",
+		"get-endpoint-creators": "*",
+		"graphql": "^16.7.1",
+		"graphql-request": "^6.1.0",
+		"react": "^18.2.0",
 		"snarkyjs": "^0.11.4",
-		"wallet-connection": "*",
-		"react": "^18.2.0"
+		"wallet-connection": "*"
 	},
 	"devDependencies": {
 		"@types/react": "^18.0.33"

@@ -41,10 +41,12 @@ export default defineConfig({
 	optimizeDeps: {
 		esbuildOptions: {
 			target: "es2022",
+
 			// Node.js global to browser globalThis
 			define: {
 				global: "globalThis",
 			},
+
 			plugins: [
 				NodeGlobalsPolyfillPlugin({
 					buffer: true,
