@@ -20,7 +20,7 @@ const CirclesWithText: React.FC<{
 					<li
 						key={step.name}
 						className={cx(
-							stepIdx !== steps.length - 1 ? "pb-10" : "",
+							stepIdx !== steps.length - 1 ? "pb-7" : "",
 							"relative",
 						)}
 					>
