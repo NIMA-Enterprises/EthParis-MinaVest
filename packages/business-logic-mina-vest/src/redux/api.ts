@@ -25,6 +25,7 @@ const minaVestBusinessLogicApi = createApi({
 				createVesting.step4.generateTxProof,
 			),
 			createVestingStep5: createMutation(createVesting.step5.sendTx),
+			createVestingStep6: createMutation(waitForTxToLeavePendingPool),
 
 			// soft image loading
 			loadImage: createQuery(loadImage),
